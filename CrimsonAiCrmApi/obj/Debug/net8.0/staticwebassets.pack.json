@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/_redirects",
+      "PackagePath": "staticwebassets"
+    },
+    {
+      "Id": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/assets/index-BwWniPPF.js",
+      "PackagePath": "staticwebassets/assets/index-BwWniPPF.js"
+    },
+    {
+      "Id": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.CrimsonAiCrmApi.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.CrimsonAiCrmApi.props",
+      "PackagePath": "build\\CrimsonAiCrmApi.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.CrimsonAiCrmApi.props",
+      "PackagePath": "buildMultiTargeting\\CrimsonAiCrmApi.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.CrimsonAiCrmApi.props",
+      "PackagePath": "buildTransitive\\CrimsonAiCrmApi.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

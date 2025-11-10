@@ -1,0 +1,77 @@
+{
+  "Version": 1,
+  "Hash": "Kb2MAFITFx0tlyNSq8masNrh0ALEGQ20BhNpj9IRvYI=",
+  "Source": "CrimsonAiCrmApi",
+  "BasePath": "_content/CrimsonAiCrmApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "CrimsonAiCrmApi/wwwroot",
+      "Source": "CrimsonAiCrmApi",
+      "ContentRoot": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/",
+      "BasePath": "_content/CrimsonAiCrmApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/_redirects",
+      "SourceId": "CrimsonAiCrmApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/",
+      "BasePath": "_content/CrimsonAiCrmApi",
+      "RelativePath": "_redirects",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/_redirects"
+    },
+    {
+      "Identity": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/assets/index-BwWniPPF.js",
+      "SourceId": "CrimsonAiCrmApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/",
+      "BasePath": "_content/CrimsonAiCrmApi",
+      "RelativePath": "assets/index-BwWniPPF.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/assets/index-BwWniPPF.js"
+    },
+    {
+      "Identity": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/index.html",
+      "SourceId": "CrimsonAiCrmApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/sofiaborden/Documents/augment-projects/crimson-ai-crm-v3 net/CrimsonAiCrmApi/wwwroot/",
+      "BasePath": "_content/CrimsonAiCrmApi",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/index.html"
+    }
+  ]
+}
