@@ -86,11 +86,34 @@ public class BioController : ControllerBase
 
     private object BuildPerplexityRequest(BioRequest request)
     {
-        var searchQuery = $"{request.Name}";
-        if (!string.IsNullOrEmpty(request.Employer))
-            searchQuery += $" {request.Employer}";
-        if (!string.IsNullOrEmpty(request.Location))
-            searchQuery += $" {request.Location}";
+        var userPrompt = $@"Generate a comprehensive, fact-based professional bio for {request.Name} using ONLY verifiable public data from reputable sources (LinkedIn, company websites, news outlets, professional profiles, university records). Do NOT include any URLs, citation markers, or sources in the main bio text.
+
+REQUIREMENTS:
+- 2-5 sentence narrative bio covering: current role and employer, tenure/years of service (e.g., ""since 2018""), notable projects or achievements, educational background when available, professional specializations
+- Use specific dates, years, project names, and quantifiable details when available
+- NO speculation or inference - only verified facts
+- Multiple citation sources preferred
+
+Person Details:
+Name: {request.Name}
+{(!string.IsNullOrEmpty(request.Occupation) ? $"Title: {request.Occupation}" : "")}
+{(!string.IsNullOrEmpty(request.Employer) ? $"Company: {request.Employer}" : "")}
+{(!string.IsNullOrEmpty(request.Location) ? $"Location: {request.Location}" : "")}
+{(!string.IsNullOrEmpty(request.Email) ? $"Email: {request.Email}" : "")}
+
+Return a JSON object containing:
+- 'bio': A 2-5 sentence comprehensive professional bio (no URLs in text)
+- 'sources': An array of objects with 'title' and 'url' for each public source used
+
+Example format:
+{{
+  ""bio"": ""John Smith serves as Chief Technology Officer at TechCorp since 2018, where he leads digital transformation initiatives across the organization and oversees a team of 50+ engineers. He previously held senior engineering roles at Microsoft and Amazon, specializing in cloud infrastructure and enterprise software development. Smith holds a Master's degree in Computer Science from Stanford University and has been recognized as a Top 40 Under 40 technology leader by TechWeek Magazine."",
+  ""sources"": [
+    {{""title"": ""LinkedIn Profile"", ""url"": ""https://linkedin.com/in/johnsmith""}},
+    {{""title"": ""TechCorp Leadership Page"", ""url"": ""https://techcorp.com/leadership/john-smith""}},
+    {{""title"": ""Stanford Alumni Directory"", ""url"": ""https://alumni.stanford.edu/directory/john-smith""}}
+  ]
+}}";
 
         return new
         {
@@ -98,28 +121,67 @@ public class BioController : ControllerBase
             temperature = 0.2,
             max_tokens = 1000,
             top_p = 0.9,
+            return_citations = true,
+            search_recency_filter = "month",
+            search_depth = "deep",
             search_domain_filter = new[] {
                 "linkedin.com", "bloomberg.com", "forbes.com", "crunchbase.com",
-                "sec.gov", "fec.gov", "opensecrets.org", "wikipedia.org"
+                "sec.gov", "theorg.com", "about.me", "reuters.com", "wsj.com"
             },
-            return_images = false,
-            return_related_questions = false,
-            search_recency_filter = "month",
-            top_k = 0,
-            stream = false,
-            presence_penalty = 0,
-            frequency_penalty = 1,
+            response_format = new
+            {
+                type = "json_schema",
+                json_schema = new
+                {
+                    schema = new
+                    {
+                        type = "object",
+                        properties = new
+                        {
+                            bio = new
+                            {
+                                type = "string",
+                                description = "A comprehensive professional bio with 2-5 factual sentences covering: current role and employer, tenure/years of service, notable projects or achievements, educational background when available, and professional specializations. Do NOT include any URLs or citation markers in this text."
+                            },
+                            sources = new
+                            {
+                                type = "array",
+                                description = "Array of sources used to create the bio",
+                                items = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        title = new
+                                        {
+                                            type = "string",
+                                            description = "Title or name of the source"
+                                        },
+                                        url = new
+                                        {
+                                            type = "string",
+                                            description = "Full URL of the source"
+                                        }
+                                    },
+                                    required = new[] { "title", "url" }
+                                }
+                            }
+                        },
+                        required = new[] { "bio", "sources" }
+                    }
+                }
+            },
             messages = new[]
             {
                 new
                 {
                     role = "system",
-                    content = "You are a professional researcher creating concise donor profiles. Provide 2-5 factual sentences about the person's professional background, notable achievements, and current role. Focus on verifiable information."
+                    content = "You are a research assistant that creates comprehensive factual bios about people for political fundraising outreach. You must return a JSON object with a detailed bio and separate sources array. Focus on profession, title, company affiliations, years of service, notable projects, educational background, recognitions, and achievements. Use ONLY verifiable public data from reputable sources."
                 },
                 new
                 {
                     role = "user",
-                    content = $"Create a brief professional bio (2-5 sentences) for {searchQuery}. Include their current role, notable achievements, and professional background. Be factual and concise."
+                    content = userPrompt
                 }
             }
         };
@@ -133,30 +195,66 @@ public class BioController : ControllerBase
         }
 
         var content = data.Choices[0]?.Message?.Content ?? "";
-        var citations = data.Citations ?? Array.Empty<string>();
 
-        // Split content into sentences
-        var sentences = content
-            .Split(new[] { ". ", ".\n", "! ", "? " }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => s.Trim())
-            .Where(s => !string.IsNullOrWhiteSpace(s))
-            .Select(s => s.EndsWith(".") || s.EndsWith("!") || s.EndsWith("?") ? s : s + ".")
-            .Take(5)
-            .ToArray();
-
-        var citationObjects = citations.Select(url => new
+        try
         {
-            title = ExtractDomainFromUrl(url),
-            url = url
-        }).ToArray();
+            // Parse the JSON response
+            var jsonDoc = JsonDocument.Parse(content);
+            var root = jsonDoc.RootElement;
 
-        return new
+            // Extract bio and sources from JSON
+            var bio = root.GetProperty("bio").GetString() ?? "";
+            var sources = new List<object>();
+
+            if (root.TryGetProperty("sources", out var sourcesElement) && sourcesElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var source in sourcesElement.EnumerateArray())
+                {
+                    var title = source.TryGetProperty("title", out var titleProp) ? titleProp.GetString() : "Source";
+                    var url = source.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "#";
+
+                    sources.Add(new { title, url });
+                }
+            }
+
+            // Split bio into sentences for headlines
+            var sentences = bio
+                .Split(new[] { ". ", ".\n", "! ", "? " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.EndsWith(".") || s.EndsWith("!") || s.EndsWith("?") ? s : s + ".")
+                .Take(5)
+                .ToArray();
+
+            return new
+            {
+                success = true,
+                headlines = sentences,
+                citations = sources.ToArray(),
+                model = "sonar-pro"
+            };
+        }
+        catch (Exception ex)
         {
-            success = true,
-            headlines = sentences,
-            citations = citationObjects,
-            model = "sonar-pro"
-        };
+            _logger.LogError(ex, "Error parsing JSON response from Perplexity");
+
+            // Fallback: treat content as plain text
+            var sentences = content
+                .Split(new[] { ". ", ".\n", "! ", "? " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.EndsWith(".") || s.EndsWith("!") || s.EndsWith("?") ? s : s + ".")
+                .Take(5)
+                .ToArray();
+
+            return new
+            {
+                success = true,
+                headlines = sentences,
+                citations = new object[] { new { title = "Public Records", url = "#" } },
+                model = "sonar-pro"
+            };
+        }
     }
 
     private object GetMockResponse(BioRequest request)
