@@ -147,9 +147,7 @@ const generatePerplexityHeadlines = async (donor: Donor): Promise<{headlines: st
     console.log('🔍 Generating bio for:', donor.name, 'at', donor.employment?.employer || 'Unknown employer');
 
     // Call our backend API server instead of Perplexity directly
-    // For localhost development, use production API since we don't have local backend
-    // Add localhost-specific parameter to request search_results instead of JSON sources
-    const apiUrl = 'https://crimson-ai-crm-2.onrender.com/api/generate-bio';
+    const apiUrl = `${import.meta.env.VITE_API_URL || 'https://crimson-ai-crm-v3-net.onrender.com'}/api/generate-bio`;
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -2504,9 +2502,7 @@ Generated: ${new Date(smartBioData.lastGenerated).toLocaleDateString()}`;
       console.log('🔍 Generating bio for:', donor.name, 'at', donor.employment?.employer || 'Unknown employer');
 
       // Call our backend API server instead of Perplexity directly
-      // For localhost development, use production API since we don't have local backend
-      // Add localhost-specific parameter to request search_results instead of JSON sources
-      const apiUrl = 'https://crimson-ai-crm-2.onrender.com/api/generate-bio';
+      const apiUrl = `${import.meta.env.VITE_API_URL || 'https://crimson-ai-crm-v3-net.onrender.com'}/api/generate-bio`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
