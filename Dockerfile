@@ -6,8 +6,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy all frontend files and build
+# Copy all frontend files
 COPY . .
+
+# Set production API URL and build
+ENV VITE_API_URL=https://crimson-ai-crm-v3-net.onrender.com
 RUN npm run build
 
 # Stage 2: Build .NET backend

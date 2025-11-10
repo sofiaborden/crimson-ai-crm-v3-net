@@ -10,7 +10,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:5173",
             "http://localhost:5174",
-            "https://crimson-ai-crm-2.onrender.com"
+            "https://crimson-ai-crm-2.onrender.com",
+            "https://crimson-ai-crm-v3-net.onrender.com"
         )
         .AllowAnyMethod()
         .AllowAnyHeader();
