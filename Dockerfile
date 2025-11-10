@@ -1,5 +1,17 @@
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Stage 1: Build React frontend
+FROM node:18 AS frontend-build
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+RUN npm install
+
+# Copy all frontend files and build
+COPY . .
+RUN npm run build
+
+# Stage 2: Build .NET backend
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
 WORKDIR /src
 
 # Copy csproj and restore dependencies
@@ -12,18 +24,18 @@ WORKDIR /src/CrimsonAiCrmApi
 RUN dotnet build -c Release -o /app/build
 
 # Publish stage
-FROM build AS publish
+FROM backend-build AS publish
 RUN dotnet publish -c Release -o /app/publish
 
-# Runtime stage
+# Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Copy published app
+# Copy published .NET app
 COPY --from=publish /app/publish .
 
-# Copy React build to wwwroot
-COPY dist/ wwwroot/
+# Copy React build from frontend stage to wwwroot
+COPY --from=frontend-build /app/dist ./wwwroot
 
 # Expose port (Render will set PORT env var)
 EXPOSE 8080
