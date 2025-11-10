@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: crimson-ai-crm-dotnet
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: PERPLEXITY_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+

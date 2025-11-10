@@ -1,0 +1,26 @@
+## .NET Core
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+
+## Environment files
+.env
+.env.local
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+## OS
+.DS_Store
+Thumbs.db
+
